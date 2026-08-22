@@ -17,3 +17,11 @@ SAGE v0.1 Contract Baseline
 - Stage 2 mutation policy is behavioral and tested, not encoded in stage_io.py.
 - Stage 1 raw_source_reference is explicitly provisional.
 - Stage 6 output is intentionally undefined until persistence implementation exists.
+- Source has a source_type field (DOCUMENT/DATABASE/API/WEB/OTHER);
+  these specific categories are a v0.1 addition, not part of earlier
+  locked design, and were introduced during contract review.
+
+- Fact temporal fields established: effective_from, effective_to,
+  extracted_at -- separating when a fact was true from when SAGE
+  learned it, so Stage 3 can distinguish facts that genuinely
+  contradict from facts that were both true at different times.
