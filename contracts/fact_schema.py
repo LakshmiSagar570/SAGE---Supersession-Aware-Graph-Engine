@@ -30,7 +30,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import NewType, Optional
+from typing import NewType
 
 from pydantic import BaseModel, Field
 
@@ -150,7 +150,7 @@ class Source(BaseModel):
     source_id: SourceID
     name: str
     source_type: SourceType
-    locator: Optional[str] = Field(
+    locator: str | None = Field(
         default=None,
         description="Optional URI/path/reference to the source origin.",
     )
@@ -180,7 +180,7 @@ class Fact(BaseModel):
 
     # --- provenance ---
     source: Source
-    evidence: Optional[str] = Field(
+    evidence: str | None = Field(
         default=None,
         description="Supporting evidence text/reference for this claim.",
     )
@@ -194,7 +194,7 @@ class Fact(BaseModel):
     # true, just at different times, as contradictory.
     extracted_at: datetime
     effective_from: datetime
-    effective_to: Optional[datetime] = Field(
+    effective_to: datetime | None = Field(
         default=None,
         description="Null if the fact is still current / has no known end.",
     )
@@ -249,7 +249,7 @@ class ContradictionSet(BaseModel):
 class AuthorityAssessment(BaseModel):
     source_id: SourceID
     authority_score: float = Field(ge=0.0, le=1.0)
-    rationale: Optional[str] = None
+    rationale: str | None = None
     assessed_at: datetime
 
 
@@ -269,7 +269,7 @@ class AuthorityAssessment(BaseModel):
 class Resolution(BaseModel):
     resolution_id: ResolutionID
     outcome: ResolutionOutcome
-    winning_fact_id: Optional[FactID] = Field(
+    winning_fact_id: FactID | None = Field(
         default=None,
         description="Null when outcome is UNRESOLVED or ALL_REJECTED.",
     )
