@@ -25,3 +25,20 @@ SAGE v0.1 Contract Baseline
   extracted_at -- separating when a fact was true from when SAGE
   learned it, so Stage 3 can distinguish facts that genuinely
   contradict from facts that were both true at different times.
+- **Contract change**: `Stage1Input.raw_source_reference: str` (provisional,
+  established in the original stage_io.py commit) has been replaced by
+  a shared source envelope:
+  `source_type: SourceType`, `reference: str`,
+  `raw_payload: str | bytes | None = None`.
+  Reason: the earlier single-field placeholder could not distinguish
+  fetch-pending sources (e.g. a URL, where content must still be
+  retrieved) from already-loaded sources (e.g. an API response or a
+  read file, where content is already in hand). The new envelope
+  reuses the existing SourceType enum from fact_schema.py rather than
+  introducing a parallel one. Source-specific input contracts
+  (DocumentInput, WebInput, etc.) were deliberately NOT added --
+  extraction logic per source type is an implementation concern below
+  this shared boundary, not part of the public stage contract.
+  v0.1 implementation proves the pattern with DOCUMENT first; WEB,
+  API, DATABASE, and OTHER extractors follow later against this same
+  envelope.

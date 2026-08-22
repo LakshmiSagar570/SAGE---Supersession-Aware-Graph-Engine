@@ -56,33 +56,61 @@ from contracts.fact_schema import (
     ContradictionSet,
     Fact,
     Resolution,
+    SourceType,
 )
 
 # ---------------------------------------------------------------------------
 # Stage 1 -- Ingestion
 #
-# Input is deliberately left unopinionated: ingestion sources (documents,
-# APIs, etc.) are not yet part of the locked contract. Stage 1 is the
-# pipeline's entry point -- there is no upstream stage to receive
-# structured input from.
+# Stage 1 is the pipeline's entry point -- there is no upstream stage to
+# receive structured input from. Its input envelope is deliberately
+# generic across source types (reusing SourceType from fact_schema.py,
+# not a parallel enum) because the *shape* of "what does ingestion need
+# to know before it can act" is already fully determined regardless of
+# which source-specific extractor eventually runs against it -- unlike
+# Stage6Output, whose shape genuinely depends on a persistence
+# implementation that does not exist yet.
+#
+# This envelope does NOT define source-specific input contracts
+# (DocumentInput, WebInput, APIInput, etc.). Those are
+# implementation/extraction concerns, not part of the public stage
+# boundary, and adding them here would prematurely turn a single stage
+# contract into five source-specific ones.
 # ---------------------------------------------------------------------------
 
 
 class Stage1Input(BaseModel):
     """
-    Stage 1 is the pipeline entry point -- there is no upstream stage to
-    receive structured input from.
+    Shared ingestion envelope across all SourceType values.
 
-    PROVISIONAL: raw_source_reference is a placeholder entry-point
-    reference, not a locked ingestion design. The concrete raw-ingestion
-    representation (which sources SAGE supports, what payload shape they
-    carry) has not been specified. This field exists so Stage 1 has a
-    concrete signature to implement against; when actual ingestion
-    sources are designed, changing this field is an expected and
-    legitimate contract change, not a violation of it.
+    source_type: which kind of source this is (reuses the SourceType
+        enum already defined in fact_schema.py -- not duplicated here).
+    reference: locates the raw content -- a URL, file path, API
+        endpoint, or database record reference, depending on source_type.
+    raw_payload: populated when content is already in hand at the time
+        Stage 1 is invoked (e.g. an API response body, an already-read
+        file). None when Stage 1 must fetch the content itself from
+        `reference` (e.g. given only a URL). Optional with a None
+        default since the majority of real calls for fetch-based
+        sources will not populate it.
+
+    v0.1 implementation scope: DOCUMENT is implemented first, to prove
+    the ingestion -> extraction -> Fact[] pattern end-to-end without
+    simultaneously introducing network access, authentication, or
+    database connectivity. WEB, API, DATABASE, and OTHER extractors are
+    implemented later against this same envelope -- their absence from
+    the current implementation is a scoping decision, not a contract
+    limitation; the contract already supports all five SourceType
+    values.
+
+    Supersedes the earlier provisional `raw_source_reference: str`
+    field. See CONTRACT_CHANGELOG.md for the reasoning behind this
+    change.
     """
 
-    raw_source_reference: str
+    source_type: SourceType
+    reference: str
+    raw_payload: str | bytes | None = None
 
 
 class Stage1Output(BaseModel):
