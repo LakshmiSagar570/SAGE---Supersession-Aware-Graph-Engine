@@ -1431,12 +1431,12 @@ For significant architectural changes, document the rationale before implementat
 
 ---
 
-# License
 
-This project is currently under active development.
+## License
 
-Add the project's chosen license here before publishing a public release.
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+Distributed under the **Apache License 2.0**. See [`LICENSE`](LICENSE) for more information.
 ---
 
 # Summary
