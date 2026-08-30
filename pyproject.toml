@@ -23,10 +23,13 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 
 [tool.mypy]
 python_version = "3.12"
 strict = true
+explicit_package_bases = true
+mypy_path = "src"
 
 [tool.ruff]
 line-length = 100
