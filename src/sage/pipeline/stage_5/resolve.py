@@ -215,6 +215,7 @@ def _build_winner_selected(
     )
     return Resolution(
         resolution_id=ResolutionID(str(uuid4())),
+        contradiction_id=contradiction.contradiction_id,
         outcome=ResolutionOutcome.WINNER_SELECTED,
         winning_fact_id=winner.fact_id,
         superseded_fact_ids=[f.fact_id for f in losers],
@@ -240,6 +241,7 @@ def _build_unresolved(
     )
     return Resolution(
         resolution_id=ResolutionID(str(uuid4())),
+        contradiction_id=contradiction.contradiction_id,
         outcome=ResolutionOutcome.UNRESOLVED,
         winning_fact_id=None,
         superseded_fact_ids=[],

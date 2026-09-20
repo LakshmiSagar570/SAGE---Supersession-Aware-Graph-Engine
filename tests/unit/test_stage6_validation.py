@@ -69,9 +69,12 @@ def _make_assessment(source: Source, score: float) -> AuthorityAssessment:
     )
 
 
-def _make_winner_resolution(winner: Fact, *losers: Fact) -> Resolution:
+def _make_winner_resolution(
+    winner: Fact, *losers: Fact, contradiction_id: ContradictionID | None = None
+) -> Resolution:
     return Resolution(
         resolution_id=ResolutionID(str(uuid4())),
+        contradiction_id=contradiction_id or ContradictionID(str(uuid4())),
         outcome=ResolutionOutcome.WINNER_SELECTED,
         winning_fact_id=winner.fact_id,
         superseded_fact_ids=[f.fact_id for f in losers],
@@ -80,9 +83,12 @@ def _make_winner_resolution(winner: Fact, *losers: Fact) -> Resolution:
     )
 
 
-def _make_unresolved_resolution() -> Resolution:
+def _make_unresolved_resolution(
+    contradiction_id: ContradictionID | None = None,
+) -> Resolution:
     return Resolution(
         resolution_id=ResolutionID(str(uuid4())),
+        contradiction_id=contradiction_id or ContradictionID(str(uuid4())),
         outcome=ResolutionOutcome.UNRESOLVED,
         winning_fact_id=None,
         superseded_fact_ids=[],
@@ -98,7 +104,7 @@ class TestValidateStage6Input:
         fact_a = _make_fact(subject="X", predicate="is Y", obj="A", source=source_a)
         fact_b = _make_fact(subject="X", predicate="is Y", obj="B", source=source_b)
         contradiction = _make_contradiction(fact_a.fact_id, fact_b.fact_id)
-        resolution = _make_winner_resolution(fact_a, fact_b)
+        resolution = _make_winner_resolution(fact_a, fact_b, contradiction_id=contradiction.contradiction_id)
         assessments = [
             _make_assessment(source_a, 1.0),
             _make_assessment(source_b, 0.4),
@@ -117,8 +123,10 @@ class TestValidateStage6Input:
         source = _make_source("db-1", SourceType.DATABASE)
         fact = _make_fact(subject="X", predicate="is Y", obj="A", source=source)
         phantom_fact_id = FactID(str(uuid4()))
+        c_id = ContradictionID(str(uuid4()))
         bad_resolution = Resolution(
             resolution_id=ResolutionID(str(uuid4())),
+            contradiction_id=c_id,
             outcome=ResolutionOutcome.WINNER_SELECTED,
             winning_fact_id=phantom_fact_id,
             superseded_fact_ids=[],
@@ -143,8 +151,10 @@ class TestValidateStage6Input:
         source = _make_source("db-1", SourceType.DATABASE)
         fact = _make_fact(subject="X", predicate="is Y", obj="A", source=source)
         phantom_fact_id = FactID(str(uuid4()))
+        c_id = ContradictionID(str(uuid4()))
         bad_resolution = Resolution(
             resolution_id=ResolutionID(str(uuid4())),
+            contradiction_id=c_id,
             outcome=ResolutionOutcome.WINNER_SELECTED,
             winning_fact_id=fact.fact_id,
             superseded_fact_ids=[phantom_fact_id],
@@ -245,7 +255,7 @@ class TestValidateStage6Input:
         fact_a = _make_fact(subject="X", predicate="is Y", obj="A", source=source_a)
         fact_b = _make_fact(subject="X", predicate="is Y", obj="B", source=source_b)
         contradiction = _make_contradiction(fact_a.fact_id, fact_b.fact_id)
-        resolution = _make_unresolved_resolution()
+        resolution = _make_unresolved_resolution(contradiction_id=contradiction.contradiction_id)
 
         stage_input = Stage6Input(
             facts=[fact_a, fact_b],
@@ -269,8 +279,8 @@ class TestValidateStage6Input:
 
         contradiction_1 = _make_contradiction(fact_a.fact_id, fact_b.fact_id)
         contradiction_2 = _make_contradiction(fact_c.fact_id, fact_d.fact_id)
-        resolution_1 = _make_winner_resolution(fact_a, fact_b)
-        resolution_2 = _make_unresolved_resolution()
+        resolution_1 = _make_winner_resolution(fact_a, fact_b, contradiction_id=contradiction_1.contradiction_id)
+        resolution_2 = _make_unresolved_resolution(contradiction_id=contradiction_2.contradiction_id)
 
         stage_input = Stage6Input(
             facts=[fact_a, fact_b, fact_c, fact_d],
@@ -290,7 +300,7 @@ class TestValidateStage6Input:
         fact_a = _make_fact(subject="X", predicate="is Y", obj="A", source=source_a)
         fact_b = _make_fact(subject="X", predicate="is Y", obj="B", source=source_b)
         contradiction = _make_contradiction(fact_a.fact_id, fact_b.fact_id)
-        resolution = _make_winner_resolution(fact_a, fact_b)
+        resolution = _make_winner_resolution(fact_a, fact_b, contradiction_id=contradiction.contradiction_id)
         assessment = _make_assessment(source_a, 1.0)
 
         stage_input = Stage6Input(
@@ -389,3 +399,26 @@ class TestValidateStage6Input:
             raise AssertionError("expected Stage6ValidationError")
         except Stage6ValidationError as exc:
             assert "orphan-1" in str(exc)
+    def test_unknown_resolution_contradiction_id_fails(self) -> None:
+        source_a = _make_source("db-1", SourceType.DATABASE)
+        source_b = _make_source("web-1", SourceType.WEB)
+        fact_a = _make_fact(subject="X", predicate="is Y", obj="A", source=source_a)
+        fact_b = _make_fact(subject="X", predicate="is Y", obj="B", source=source_b)
+        contradiction = _make_contradiction(fact_a.fact_id, fact_b.fact_id)
+        orphan_contradiction_id = ContradictionID(str(uuid4()))
+        bad_resolution = _make_winner_resolution(
+            fact_a, fact_b, contradiction_id=orphan_contradiction_id
+        )
+        stage_input = Stage6Input(
+            facts=[fact_a, fact_b],
+            contradictions=[contradiction],
+            authority_assessments=[],
+            resolutions=[bad_resolution],
+        )
+
+        try:
+            validate_stage6_input(stage_input)
+            raise AssertionError("expected Stage6ValidationError")
+        except Stage6ValidationError as exc:
+            assert str(orphan_contradiction_id) in str(exc)
+            assert "contradiction_id" in str(exc)

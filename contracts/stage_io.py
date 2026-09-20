@@ -49,6 +49,8 @@ not redefine these types locally.
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 from contracts.fact_schema import (
@@ -223,3 +225,10 @@ class Stage6Input(BaseModel):
 
 # Stage6Output intentionally omitted -- to be defined against the actual
 # Neo4j persistence implementation, not speculatively in advance of it.
+class Stage6Output(BaseModel):
+    facts_written: int
+    sources_written: int
+    contradictions_written: int
+    authority_assessments_written: int
+    resolutions_written: int
+    status: Literal["COMMITTED"]

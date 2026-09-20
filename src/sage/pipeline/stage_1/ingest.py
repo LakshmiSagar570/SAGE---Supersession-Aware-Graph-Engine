@@ -52,25 +52,21 @@ def ingest(stage_input: Stage1Input) -> str:
         )
 
     if stage_input.raw_payload is not None:
-        payload = stage_input.raw_payload
-        if isinstance(payload, bytes):
-            return payload.decode("utf-8")
-        return payload
+        raw_text = _decode_payload(stage_input.raw_payload)
+    else:
+        path = Path(stage_input.reference)
+        if not path.is_file():
+            raise IngestionError(
+                f"DOCUMENT reference does not point to an existing file: "
+                f"{stage_input.reference!r}"
+            )
 
-    path = Path(stage_input.reference)
-    if not path.is_file():
-        raise IngestionError(
-            f"DOCUMENT reference does not point to an existing file: "
-            f"{stage_input.reference!r}"
-        )
+        try:
+            raw_text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError as exc:
+            raise IngestionError("input file is not valid UTF-8.") from exc
 
-    try:
-        return path.read_text(encoding="utf-8")
-    except UnicodeDecodeError as exc:
-        raise IngestionError(
-            f"Failed to read {stage_input.reference!r} as UTF-8 plain "
-            f"text. v0.1 supports .txt plain-text documents only."
-        ) from exc
+    return raw_text
 def _decode_payload(payload: str | bytes) -> str:
     """Return payload as str, decoding bytes as UTF-8 if necessary."""
     if isinstance(payload, str):
@@ -82,3 +78,12 @@ def _decode_payload(payload: str | bytes) -> str:
         raise IngestionError(
             "raw_payload bytes are not valid UTF-8."
         ) from exc
+def test_malformed_raw_payload_raises_ingestion_error():
+    input_data = Stage1Input(
+        document_id=...,
+        source_path=...,
+        raw_payload=b"\xff\xfe\xfd",
+    )
+
+    with pytest.raises(IngestionError):
+        ingest(input_data)

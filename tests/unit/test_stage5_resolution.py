@@ -114,6 +114,7 @@ class TestResolveContradictions:
 
         assert len(resolutions) == 1
         resolution = resolutions[0]
+        assert resolution.contradiction_id == contradiction.contradiction_id
         assert resolution.outcome == ResolutionOutcome.UNRESOLVED
         assert resolution.winning_fact_id is None
         assert resolution.superseded_fact_ids == []
@@ -134,6 +135,7 @@ class TestResolveContradictions:
 
         assert len(resolutions) == 1
         resolution = resolutions[0]
+        assert resolution.contradiction_id == contradiction.contradiction_id
         assert resolution.outcome == ResolutionOutcome.UNRESOLVED
         assert resolution.winning_fact_id is None
 
@@ -159,6 +161,7 @@ class TestResolveContradictions:
         )
 
         resolution = resolutions[0]
+        assert resolution.contradiction_id == contradiction.contradiction_id
         assert resolution.outcome == ResolutionOutcome.WINNER_SELECTED
         assert resolution.winning_fact_id == fact_a.fact_id
         assert set(resolution.superseded_fact_ids) == {fact_b.fact_id, fact_c.fact_id}
@@ -185,6 +188,7 @@ class TestResolveContradictions:
         )
 
         resolution = resolutions[0]
+        assert resolution.contradiction_id == contradiction.contradiction_id
         assert resolution.outcome == ResolutionOutcome.UNRESOLVED
         assert resolution.winning_fact_id is None
         assert resolution.superseded_fact_ids == []

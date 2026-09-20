@@ -162,3 +162,12 @@ def test_extract_maps_founded_date_as_object(
 
     assert founded_fact.object == "2018-03-12"
     assert founded_fact.effective_from == datetime(2018, 3, 12, tzinfo=UTC)
+def test_ingest_rejects_malformed_raw_payload_utf8() -> None:
+    stage_input = Stage1Input(
+        source_type=SourceType.DOCUMENT,
+        reference="irrelevant-when-payload-present.txt",
+        raw_payload=b"\xff\xfe",
+    )
+
+    with pytest.raises(IngestionError):
+        ingest(stage_input)

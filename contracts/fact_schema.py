@@ -256,7 +256,8 @@ class AuthorityAssessment(BaseModel):
 # ---------------------------------------------------------------------------
 # Resolution
 #
-# Stage 5 output. Represents ONE coherent resolution decision -- not an
+# Stage 5 output. Represents ONE coherent resolution decision for a specific
+# ContradictionSet (explicitly linked via contradiction_id) -- not an
 # arbitrary batch of unrelated facts. superseded_fact_ids is plural by
 # design: a single more-authoritative fact may supersede several earlier
 # facts about the same subject in one resolution event. This plurality is
@@ -268,6 +269,7 @@ class AuthorityAssessment(BaseModel):
 
 class Resolution(BaseModel):
     resolution_id: ResolutionID
+    contradiction_id: ContradictionID
     outcome: ResolutionOutcome
     winning_fact_id: FactID | None = Field(
         default=None,

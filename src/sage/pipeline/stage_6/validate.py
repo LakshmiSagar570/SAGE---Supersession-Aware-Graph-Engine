@@ -1,9 +1,9 @@
 """
 Stage 6 — Structural Validation.
 
-Responsibility: verify that a Stage6Input's cross-references are
-internally consistent, before any future materialization step touches
-it.
+Responsibility: verify that a Stage6Input's cross-references and
+invariants are internally consistent, before any materialization step
+touches it.
 
     Stage6Input
           |
@@ -14,14 +14,13 @@ it.
           └── invalid -> raises Stage6ValidationError
 
 This module is deliberately narrow. It validates only what the
-EXISTING contracts already make checkable — reference integrity and ID
-uniqueness. It does not construct a graph, does not define or return a
-Stage6Output (the real contract explicitly leaves that type
-undefined — see contracts/stage_io.py's Stage6Input docstring), does
-not create nodes or relationships, does not infer any relationship
-that Stage 5 didn't already establish, and never mutates its input.
+EXISTING contracts already make checkable — reference integrity, ID
+uniqueness, and per-ResolutionOutcome invariants. It does not
+construct a graph, does not create nodes or relationships, does not
+infer any relationship that Stage 5 didn't already establish, and
+never mutates its input.
 
-What this module checks, per spec:
+What this module checks:
 
     1. Every Resolution.winning_fact_id, when non-null, exists in
        Stage6Input.facts.
@@ -40,6 +39,16 @@ What this module checks, per spec:
        entries themselves don't duplicate a source_id (Stage 4's own
        "one assessment per source" invariant, re-checked here as a
        structural property of the input rather than trusted blindly).
+    9. Every ContradictionSet.conflicting_fact_ids has at least 2
+       entries and no duplicate FactIDs within itself.
+   10. Resolution outcome invariants: WINNER_SELECTED requires a
+       non-null winning_fact_id; UNRESOLVED and ALL_REJECTED both
+       require winning_fact_id to be None. (Note: the current Stage 5
+       policy — see stage_5/resolve.py — can only ever emit
+       WINNER_SELECTED or UNRESOLVED; ALL_REJECTED is a contract-level
+       possibility this check still validates against, since the
+       Resolution *type* permits it even though today's Stage 5
+       implementation never produces it.)
 
 What this module does NOT do: repair a bad reference, drop an invalid
 entry and continue, or guess at what a broken reference "probably"
@@ -51,10 +60,12 @@ from __future__ import annotations
 
 from contracts.fact_schema import (
     AuthorityAssessment,
+    ContradictionID,
     ContradictionSet,
     Fact,
     FactID,
     Resolution,
+    ResolutionOutcome,
     Source,
     SourceID,
 )
@@ -62,35 +73,42 @@ from contracts.stage_io import Stage6Input
 
 
 class Stage6ValidationError(Exception):
-    """Raised when a Stage6Input's cross-references are not internally
-    consistent. The message always names the specific broken
-    reference — never a generic "validation failed"."""
+    """Raised when a Stage6Input's cross-references or invariants are
+    not internally consistent. The message always names the specific
+    broken reference or violated rule — never a generic "validation
+    failed"."""
 
 
 def validate_stage6_input(stage_input: Stage6Input) -> None:
     """Validate a Stage6Input's structural integrity.
 
     Returns None on success. Raises Stage6ValidationError on the first
-    violation found, naming the exact broken reference. Does not
-    mutate stage_input or anything inside it.
+    violation found, naming the exact broken reference or rule. Does
+    not mutate stage_input or anything inside it.
 
     Checks run in a fixed order (uniqueness checks first, then
-    reference checks) so that a given invalid input always fails on
-    the same check for the same reason — required for the
-    determinism test (spec item K).
+    reference checks, then invariant checks) so that a given invalid
+    input always fails on the same check for the same reason —
+    required for deterministic validation.
     """
     _check_unique_fact_ids(stage_input.facts)
     _check_unique_contradiction_ids(stage_input.contradictions)
     _check_unique_resolution_ids(stage_input.resolutions)
     _check_consistent_source_ids(stage_input.facts)
     _check_unique_assessment_source_ids(stage_input.authority_assessments)
+    _check_contradiction_shape(stage_input.contradictions)
 
     fact_ids = {fact.fact_id for fact in stage_input.facts}
     source_ids = {fact.source.source_id for fact in stage_input.facts}
+    contradiction_ids = {c.contradiction_id for c in stage_input.contradictions}
 
     _check_contradiction_fact_references(stage_input.contradictions, fact_ids)
     _check_resolution_fact_references(stage_input.resolutions, fact_ids)
+    _check_resolution_contradiction_references(
+        stage_input.resolutions, contradiction_ids
+    )
     _check_assessment_source_references(stage_input.authority_assessments, source_ids)
+    _check_resolution_outcome_invariants(stage_input.resolutions)
 
 
 def _check_unique_fact_ids(facts: list[Fact]) -> None:
@@ -167,6 +185,26 @@ def _check_unique_assessment_source_ids(
         seen.add(key)
 
 
+def _check_contradiction_shape(contradictions: list[ContradictionSet]) -> None:
+    """Each ContradictionSet must reference at least 2 facts (a
+    contradiction between fewer than 2 facts isn't a contradiction),
+    with no duplicate FactIDs listed within the same ContradictionSet."""
+    for contradiction in contradictions:
+        fact_ids = contradiction.conflicting_fact_ids
+        if len(fact_ids) < 2:
+            raise Stage6ValidationError(
+                f"ContradictionSet {contradiction.contradiction_id} has "
+                f"fewer than 2 conflicting_fact_ids ({len(fact_ids)}): a "
+                f"contradiction requires at least 2 competing facts."
+            )
+        if len(set(fact_ids)) != len(fact_ids):
+            raise Stage6ValidationError(
+                f"ContradictionSet {contradiction.contradiction_id} lists "
+                f"a duplicate FactID within its own conflicting_fact_ids: "
+                f"{fact_ids}."
+            )
+
+
 def _check_contradiction_fact_references(
     contradictions: list[ContradictionSet], fact_ids: set[FactID]
 ) -> None:
@@ -208,4 +246,46 @@ def _check_assessment_source_references(
                 f"AuthorityAssessment references unknown source_id "
                 f"{assessment.source_id}: no fact in the input has a "
                 f"Source with this source_id."
+            )
+
+
+def _check_resolution_outcome_invariants(resolutions: list[Resolution]) -> None:
+    """WINNER_SELECTED requires a winner; UNRESOLVED and ALL_REJECTED
+    both require the absence of one. See module docstring for the note
+    on ALL_REJECTED being contract-level-valid even though the current
+    Stage 5 policy never emits it."""
+    for resolution in resolutions:
+        if (
+            resolution.outcome is ResolutionOutcome.WINNER_SELECTED
+            and resolution.winning_fact_id is None
+        ):
+            raise Stage6ValidationError(
+                f"Resolution {resolution.resolution_id} has outcome "
+                f"WINNER_SELECTED but winning_fact_id is None: a selected "
+                f"winner requires a winning_fact_id."
+            )
+        if (
+            resolution.outcome
+            in (ResolutionOutcome.UNRESOLVED, ResolutionOutcome.ALL_REJECTED)
+            and resolution.winning_fact_id is not None
+        ):
+            raise Stage6ValidationError(
+                f"Resolution {resolution.resolution_id} has outcome "
+                f"{resolution.outcome.value} but winning_fact_id is set to "
+                f"{resolution.winning_fact_id}: {resolution.outcome.value} "
+                f"must not have a winner."
+            )
+
+
+def _check_resolution_contradiction_references(
+    resolutions: list[Resolution], contradiction_ids: set[ContradictionID]
+) -> None:
+    """Each Resolution must reference a ContradictionSet that exists in
+    Stage6Input.contradictions."""
+    for res in resolutions:
+        if res.contradiction_id not in contradiction_ids:
+            raise Stage6ValidationError(
+                f"Resolution {res.resolution_id} references unknown "
+                f"contradiction_id {res.contradiction_id}: no "
+                f"ContradictionSet with this ID exists in the input."
             )

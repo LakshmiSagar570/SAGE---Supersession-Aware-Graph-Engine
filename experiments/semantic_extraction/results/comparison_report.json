@@ -1,0 +1,220 @@
+[
+  {
+    "file": "apple_10k_2024_properties.txt",
+    "rule": [],
+    "semantic": {
+      "status": "OK",
+      "error_detail": "item 2: 1 validation error for ExtractionCandidate\nobject\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type",
+      "facts": [
+        {
+          "subject": "The Company",
+          "predicate": "is located in",
+          "object": "Cupertino, California",
+          "llm_confidence": 1.0,
+          "fact_id": "aebf82bd-1516-49bd-abd2-17a17a051a39"
+        },
+        {
+          "subject": "The Company",
+          "predicate": "owned or leased facilities and land for",
+          "object": "corporate functions, R&D, data centers, retail and other purposes",
+          "llm_confidence": 1.0,
+          "fact_id": "0f14a5ea-ad35-4a59-97d1-300c90c3f3c7"
+        }
+      ],
+      "rejected": []
+    }
+  },
+  {
+    "file": "apple_10k_2024_cybersecurity.txt",
+    "rule": [],
+    "semantic": {
+      "status": "MALFORMED_RESPONSE",
+      "error_detail": "JSON parse failure: Invalid \\escape: line 1 column 263 (char 262)",
+      "facts": [],
+      "rejected": []
+    }
+  },
+  {
+    "file": "apple_10k_2024_talent_risk.txt",
+    "rule": [],
+    "semantic": {
+      "status": "OK",
+      "error_detail": "item 4: 1 validation error for ExtractionCandidate\nobject\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type; item 6: 1 validation error for ExtractionCandidate\nobject\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type",
+      "facts": [
+        {
+          "subject": "the Company's team members",
+          "predicate": "depends on the talents and efforts of",
+          "object": "its future success",
+          "llm_confidence": 1.0,
+          "fact_id": "68e249c1-99ab-4459-a5df-826d6eabd37d"
+        },
+        {
+          "subject": "its Chief Executive Officer",
+          "predicate": "is",
+          "object": "a key personnel",
+          "llm_confidence": 1.0,
+          "fact_id": "b0e99e49-eda7-49b4-9cbc-1365d25a40cc"
+        },
+        {
+          "subject": "its executive team",
+          "predicate": "is",
+          "object": "a key personnel",
+          "llm_confidence": 1.0,
+          "fact_id": "f99ab807-d6ec-4139-90a9-9b10bdddebdb"
+        },
+        {
+          "subject": "its other highly skilled employees",
+          "predicate": "is",
+          "object": "a key personnel",
+          "llm_confidence": 1.0,
+          "fact_id": "8efdf81e-1c82-4b39-9c90-95d88f37f499"
+        },
+        {
+          "subject": "their talents",
+          "predicate": "is",
+          "object": "in high demand",
+          "llm_confidence": 1.0,
+          "fact_id": "be9eeb02-3aac-4e89-a574-5ed2648b3e68"
+        },
+        {
+          "subject": "key personnel",
+          "predicate": "are located in",
+          "object": "Silicon Valley",
+          "llm_confidence": 1.0,
+          "fact_id": "ae357fc7-9768-45fc-b6bf-3fb1d0d24f21"
+        }
+      ],
+      "rejected": []
+    }
+  },
+  {
+    "file": "tenet_10k_incorporation.txt",
+    "rule": [],
+    "semantic": {
+      "status": "OK",
+      "error_detail": null,
+      "facts": [
+        {
+          "subject": "Tenet Healthcare Corporation",
+          "predicate": "was incorporated in",
+          "object": "the State of Nevada",
+          "llm_confidence": 1.0,
+          "fact_id": "223cc992-4b8e-48d9-81e0-86482426fbbf"
+        },
+        {
+          "subject": "Tenet Healthcare Corporation",
+          "predicate": "files",
+          "object": "annual, quarterly and current reports, proxy statements and other documents",
+          "llm_confidence": 1.0,
+          "fact_id": "4e0a37d6-dae4-4eae-934c-08a84860c8ca"
+        }
+      ],
+      "rejected": []
+    }
+  },
+  {
+    "file": "ict_8k_cfo_appointment.txt",
+    "rule": [],
+    "semantic": {
+      "status": "OK",
+      "error_detail": null,
+      "facts": [
+        {
+          "subject": "Ryan LeBon",
+          "predicate": "was appointed Chief Financial Officer of",
+          "object": "the Company",
+          "llm_confidence": 1.0,
+          "fact_id": "4f9d1f25-6db4-41fd-b53d-dcaca03a0014"
+        },
+        {
+          "subject": "Richard Ransom",
+          "predicate": "continues as President of",
+          "object": "the Company",
+          "llm_confidence": 1.0,
+          "fact_id": "a0bb7a6b-2afc-4158-87a5-7373f1dd91d0"
+        }
+      ],
+      "rejected": []
+    }
+  },
+  {
+    "file": "8x8_8k_cfo_appointment.txt",
+    "rule": [],
+    "semantic": {
+      "status": "OK",
+      "error_detail": null,
+      "facts": [
+        {
+          "subject": "James Sullivan",
+          "predicate": "has been appointed chief financial officer of",
+          "object": "8x8, Inc.",
+          "llm_confidence": 1.0,
+          "fact_id": "db00af18-d460-49fb-a64d-08c8838a462a"
+        },
+        {
+          "subject": "David Stoll",
+          "predicate": "replacing",
+          "object": "David Stoll",
+          "llm_confidence": 1.0,
+          "fact_id": "8760e708-625d-4cb5-90f5-208c3c483c0a"
+        }
+      ],
+      "rejected": []
+    }
+  },
+  {
+    "file": "msft_def14a_thompson_ceo.txt",
+    "rule": [
+      {
+        "subject": "Mr. Thompson",
+        "predicate": "is the chief executive officer of",
+        "object": "Virtual Instruments"
+      }
+    ],
+    "semantic": {
+      "status": "OK",
+      "error_detail": null,
+      "facts": [
+        {
+          "subject": "Mr. Thompson",
+          "predicate": "is the chief executive officer of",
+          "object": "Virtual Instruments",
+          "llm_confidence": 1.0,
+          "fact_id": "98233323-285a-4612-bb2d-91e9bb7ea088"
+        }
+      ],
+      "rejected": []
+    }
+  },
+  {
+    "file": "msft_def14a_thompson_ceo_verbatim_compound.txt",
+    "rule": [
+      {
+        "subject": "Mr. Thompson",
+        "predicate": "is the chief executive officer of",
+        "object": "and has a less-than-10% beneficial interest in Virtual Instruments"
+      }
+    ],
+    "semantic": {
+      "status": "OK",
+      "error_detail": null,
+      "facts": [
+        {
+          "subject": "Mr. Thompson",
+          "predicate": "is the chief executive officer of",
+          "object": "Virtual Instruments",
+          "llm_confidence": 1.0,
+          "fact_id": "fdc70ad6-8462-43c5-b584-5138b22c5baa"
+        },
+        {
+          "subject": "Mr. Thompson",
+          "predicate": "has a less-than-10% beneficial interest in",
+          "object": "Virtual Instruments",
+          "llm_confidence": 1.0,
+          "fact_id": "9c6a1223-fd06-4a37-85bd-52b743eeec69"
+        }
+      ],
+      "rejected": []
+    }
+  }
+]

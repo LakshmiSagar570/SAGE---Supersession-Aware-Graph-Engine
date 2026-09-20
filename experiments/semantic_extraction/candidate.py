@@ -1,0 +1,172 @@
+# experiments/semantic_extraction/candidate.py
+"""
+Phase 2 semantic-extraction experiment -- candidate model and
+deterministic validation.
+
+Deliberately isolated from src/sage/pipeline/: this is an experiment,
+not a new permanent SAGE stage. Nothing here imports from or writes to
+contracts/fact_schema.py, contracts/stage_io.py, or any Stage 1-6
+module in a way that changes their behavior. The one import from the
+real codebase (contracts.fact_schema.Fact) is read-only -- this module
+constructs Fact instances using the existing, unmodified contract, the
+same way stage_1/extract.py already does for RULE-origin facts.
+
+Implements SEMANTIC_EXTRACTION_DESIGN.md sections 2.2 (candidate shape),
+2.3 (source_span verification), 2.5 (rejection categories), and 2.7
+(wrapper -- Fact construction, WITHOUT writing llm_confidence into
+Fact.confidence).
+"""
+
+from __future__ import annotations
+
+from datetime import UTC, datetime
+from enum import Enum
+from uuid import uuid4
+
+from pydantic import BaseModel, Field
+
+from contracts.fact_schema import Fact, FactID, FactStatus, Source
+
+
+class ExtractionCandidate(BaseModel):
+    """One claim the semantic extractor believes a document expresses.
+
+    Never persisted, never passed to Stage 2+. Consumed only by the
+    deterministic wrapper (validate_and_build_fact, below) that
+    converts a validated candidate into a real Fact.
+
+    Per the accepted design (section 2.2), claim_type is deliberately NOT
+    included here -- whether the wrapper needs it to normalize a
+    candidate deterministically is a question this experiment's real
+    output should inform, not a decision made in advance.
+    """
+
+    subject: str
+    predicate: str
+    object: str
+    effective_from_text: str | None = None
+    llm_confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+        description=(
+            "LLM's own self-reported value. EXPERIMENTAL METADATA ONLY. "
+            "Never treated as a calibrated probability, and never mapped "
+            "onto Fact.confidence -- see design doc sections 2.4 and 2.7."
+        ),
+    )
+    source_span: str = Field(
+        description=(
+            "Exact substring of the input document this candidate was "
+            "derived from. Verified against the real input by "
+            "validate_and_build_fact before a Fact is ever constructed."
+        )
+    )
+
+
+class RejectionReason(str, Enum):
+    """Per design section 2.5 -- kept distinct so analysis never
+    conflates different failure types with each other or with a
+    legitimate zero-candidate result (section 2.6)."""
+
+    UNVERIFIABLE_SOURCE_SPAN = "UNVERIFIABLE_SOURCE_SPAN"
+    EMPTY_REQUIRED_FIELD = "EMPTY_REQUIRED_FIELD"
+
+
+class CandidateResult(BaseModel):
+    """The outcome of validating one ExtractionCandidate: either a real
+    Fact was constructed, or it was rejected with a specific reason.
+    Exactly one of fact / rejection_reason is set."""
+
+    model_config = {"arbitrary_types_allowed": True}
+
+    candidate: ExtractionCandidate
+    fact: Fact | None = None
+    rejection_reason: RejectionReason | None = None
+
+
+def validate_and_build_fact(
+    candidate: ExtractionCandidate,
+    raw_text: str,
+    source: Source,
+) -> CandidateResult:
+    """Deterministic wrapper: validates one candidate against the real
+    source document and, if valid, builds a real Fact from it.
+
+    Per design section 2.3: source_span verification against raw_text is
+    mandatory, not advisory. A candidate whose span cannot be found
+    verbatim in the source is rejected outright -- never fuzzy-matched,
+    never trimmed, never silently accepted.
+
+    Per design section 2.7: Fact.confidence is set the same way it
+    already is for every other Fact in the frozen contract. This
+    function does NOT write llm_confidence into Fact.confidence --
+    that value stays on the candidate itself, retrievable by the
+    caller (see run_experiment.py) as experimental metadata keyed by
+    the constructed Fact's fact_id, never inside the Fact.
+    """
+    if not candidate.subject.strip() or not candidate.predicate.strip() or not candidate.object.strip():
+        return CandidateResult(
+            candidate=candidate,
+            rejection_reason=RejectionReason.EMPTY_REQUIRED_FIELD,
+        )
+
+    if candidate.source_span not in raw_text:
+        # Mandatory, exact substring containment. No fuzzy matching --
+        # see design section 2.3's explicit reasoning for why this must
+        # not be relaxed.
+        return CandidateResult(
+            candidate=candidate,
+            rejection_reason=RejectionReason.UNVERIFIABLE_SOURCE_SPAN,
+        )
+
+    now = datetime.now(UTC)
+    effective_from = _parse_effective_from(candidate.effective_from_text, fallback=now)
+
+    fact = Fact(
+        fact_id=FactID(str(uuid4())),
+        subject=candidate.subject,
+        predicate=candidate.predicate,
+        object=candidate.object,
+        source=source,
+        evidence=candidate.source_span,
+        extracted_at=now,
+        effective_from=effective_from,
+        effective_to=None,
+        # Fact.confidence is set to the frozen contract's existing
+        # default/meaning, exactly as RULE-origin facts already do in
+        # stage_1/extract.py (confirmed: RULE facts hardcode 1.0).
+        # llm_confidence is NOT written here -- see docstring above and
+        # design section 2.7.
+        confidence=1.0,
+        status=FactStatus.DISCOVERED,
+        metadata={},
+    )
+
+    return CandidateResult(candidate=candidate, fact=fact)
+
+
+def _parse_effective_from(text: str | None, *, fallback: datetime) -> datetime:
+    """Deterministic date parsing -- NOT the LLM's job (design section
+    2.2's explicit reasoning: date parsing is verifiable and
+    non-semantic, so it belongs in the wrapper, not the model).
+
+    Deliberately minimal for this experiment: attempts a small set of
+    common explicit formats seen in the real EDGAR fixtures
+    (e.g. "January 1, 2014", "2014-01-01"). Falls back to `fallback`
+    (extracted_at) on any parse failure -- identical fallback semantics
+    to RULE-origin facts with no explicit date, so SEMANTIC-origin facts
+    don't get a different temporal contract than RULE-origin ones.
+    """
+    if not text:
+        return fallback
+
+    candidate_formats = ["%Y-%m-%d", "%B %d, %Y", "%b %d, %Y"]
+    cleaned = text.strip().rstrip(".")
+    for fmt in candidate_formats:
+        try:
+            parsed = datetime.strptime(cleaned, fmt)
+            return parsed.replace(tzinfo=UTC)
+        except ValueError:
+            continue
+
+    return fallback

@@ -297,3 +297,5 @@ class TestFindContradictionPairs:
         forward_ids = [frozenset(f.fact_id for f in pair) for pair in forward]
         reversed_ids = [frozenset(f.fact_id for f in pair) for pair in reversed_order]
         assert forward_ids == reversed_ids
+
+
