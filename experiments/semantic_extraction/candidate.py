@@ -94,6 +94,17 @@ class RejectionReason(str, Enum):
 
     UNVERIFIABLE_SOURCE_SPAN = "UNVERIFIABLE_SOURCE_SPAN"
     EMPTY_REQUIRED_FIELD = "EMPTY_REQUIRED_FIELD"
+    # Locked in Phase 4A, specified in Phase 4B section 5:
+    SUBJECT_EQUALS_OBJECT = "SUBJECT_EQUALS_OBJECT"
+    BARE_COPULA_PREDICATE = "BARE_COPULA_PREDICATE"
+
+
+# Phase 4B section 5, check 4. The predicate, after .strip().lower(), must
+# not be exactly one of these. This is deliberately the ENTIRE rule: it
+# targets predicates that are nothing but a copula ("its executive team"
+# -- "is" -- "a key personnel"). It does not attempt general
+# fragmentary-claim detection, which Phase 4A left explicitly open.
+_BARE_COPULA_PREDICATES = frozenset({"is", "are", "was", "were"})
 
 
 class CandidateResult(BaseModel):
@@ -115,6 +126,17 @@ def validate_and_build_fact(
 ) -> CandidateResult:
     """Deterministic wrapper: validates one candidate against the real
     source document and, if valid, builds a real Fact from it.
+
+    Checks run in this order, and the first failure wins (Phase 4B
+    section 5); later checks are not evaluated once one fails:
+        1. required fields non-empty      -> EMPTY_REQUIRED_FIELD
+        2. source_span found in raw_text  -> UNVERIFIABLE_SOURCE_SPAN
+        3. subject != object              -> SUBJECT_EQUALS_OBJECT
+        4. predicate is not a bare copula -> BARE_COPULA_PREDICATE
+    Every check applies identically to RULE- and SEMANTIC-origin
+    candidates. Nothing in this function reads candidate.origin, on
+    purpose: once a candidate is a Fact, downstream stages must not be
+    able to tell which extractor produced it (Phase 4A/4B).
 
     Per design section 2.3: source_span verification against raw_text is
     mandatory, not advisory. A candidate whose span cannot be found
@@ -141,6 +163,27 @@ def validate_and_build_fact(
         return CandidateResult(
             candidate=candidate,
             rejection_reason=RejectionReason.UNVERIFIABLE_SOURCE_SPAN,
+        )
+
+    # Passing the span check proves provenance only -- that this text
+    # really exists in the document -- never that subject/predicate/
+    # object correctly describe it (Phase 4B section 5, check 2 caveat).
+    # The two checks below are the deterministic guards against the two
+    # concrete content failures Phase 2 observed despite valid spans.
+
+    # Exact string match after .strip() -- deliberately NOT case-folded
+    # (Phase 4B section 5, check 3). Real case: "David Stoll" --
+    # "replacing" -- "David Stoll" (SEMANTIC_EXTRACTION_RESULTS.md 3.6).
+    if candidate.subject.strip() == candidate.object.strip():
+        return CandidateResult(
+            candidate=candidate,
+            rejection_reason=RejectionReason.SUBJECT_EQUALS_OBJECT,
+        )
+
+    if candidate.predicate.strip().lower() in _BARE_COPULA_PREDICATES:
+        return CandidateResult(
+            candidate=candidate,
+            rejection_reason=RejectionReason.BARE_COPULA_PREDICATE,
         )
 
     now = datetime.now(UTC)
