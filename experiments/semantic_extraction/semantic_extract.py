@@ -20,7 +20,10 @@ from typing import Callable, NamedTuple
 
 from pydantic import ValidationError
 
-from experiments.semantic_extraction.candidate import ExtractionCandidate
+from experiments.semantic_extraction.candidate import (
+    ExtractionCandidate,
+    ExtractionOrigin,
+)
 
 # Type of the injected LLM-calling function: takes the raw document
 # text, returns the raw string response body from the API. Raises on
@@ -123,7 +126,15 @@ def _parse_response(raw_response: str) -> SemanticExtractionResult:
     parse_errors: list[str] = []
     for i, item in enumerate(parsed):
         try:
-            candidates.append(ExtractionCandidate(**item))
+            # Phase 4B: origin is required and is never the model's to
+            # declare. It is stamped here, AFTER unpacking the model's
+            # item, so a response that includes its own "origin" key
+            # (e.g. claiming RULE) is overridden rather than trusted.
+            candidates.append(
+                ExtractionCandidate(
+                    **{**item, "origin": ExtractionOrigin.SEMANTIC}
+                )
+            )
         except ValidationError as exc:
             # Per design section 2.5: a single malformed candidate within
             # an otherwise-valid response is rejected individually --

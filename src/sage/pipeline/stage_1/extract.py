@@ -47,7 +47,7 @@ from contracts.fact_schema import Fact, FactID, FactStatus, Source
 # Order matters: more specific patterns (with a role + date) must be
 # tried before their more general counterparts.
 
-_PATTERNS: list[tuple[re.Pattern[str], str]] = [
+PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (
         re.compile(
             r"^(?P<subject>.+?) was appointed (?P<role>.+?) of "
@@ -90,7 +90,7 @@ def _parse_claim_sentence(
 
     or None if the sentence does not match a known claim shape.
     """
-    for pattern, predicate_template in _PATTERNS:
+    for pattern, predicate_template in PATTERNS:
         match = pattern.match(sentence)
 
         if not match:

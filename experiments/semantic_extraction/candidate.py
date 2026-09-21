@@ -28,6 +28,20 @@ from pydantic import BaseModel, Field
 from contracts.fact_schema import Fact, FactID, FactStatus, Source
 
 
+class ExtractionOrigin(str, Enum):
+    """Which extractor produced a candidate (Phase 4B section 1).
+
+    Required on every ExtractionCandidate so that RULE- and SEMANTIC-
+    origin candidates can share one validation path while remaining
+    distinguishable for audit logging. It never becomes part of Fact
+    (Phase 4B section 9): once a candidate is a Fact, downstream stages
+    cannot tell which extractor produced it.
+    """
+
+    RULE = "RULE"
+    SEMANTIC = "SEMANTIC"
+
+
 class ExtractionCandidate(BaseModel):
     """One claim the semantic extractor believes a document expresses.
 
@@ -45,13 +59,16 @@ class ExtractionCandidate(BaseModel):
     predicate: str
     object: str
     effective_from_text: str | None = None
-    llm_confidence: float = Field(
+    llm_confidence: float | None = Field(
+        default=None,
         ge=0.0,
         le=1.0,
         description=(
             "LLM's own self-reported value. EXPERIMENTAL METADATA ONLY. "
             "Never treated as a calibrated probability, and never mapped "
-            "onto Fact.confidence -- see design doc sections 2.4 and 2.7."
+            "onto Fact.confidence -- see design doc sections 2.4 and 2.7. "
+            "None for RULE-origin candidates (Phase 4B section 1): a "
+            "rule match has no model-reported confidence."
         ),
     )
     source_span: str = Field(
@@ -60,6 +77,13 @@ class ExtractionCandidate(BaseModel):
             "derived from. Verified against the real input by "
             "validate_and_build_fact before a Fact is ever constructed."
         )
+    )
+    origin: ExtractionOrigin = Field(
+        description=(
+            "Which extractor produced this candidate. Required, no "
+            "default (Phase 4B section 1). Audit/validation metadata "
+            "only -- never copied into Fact or Fact.metadata."
+        ),
     )
 
 
