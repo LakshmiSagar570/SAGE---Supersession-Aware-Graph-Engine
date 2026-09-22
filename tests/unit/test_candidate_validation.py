@@ -163,6 +163,23 @@ class TestSubjectEqualsObject:
         raw = "some real text about David Stoll"
         _assert_accepted(_validate("david stoll", "replacing", "David Stoll", raw_text=raw))
 
+    @pytest.mark.parametrize(
+        "subject,obj",
+        [
+            ("Acme", "Acme Holdings"),  # subject is a prefix of object
+            ("Holdings", "Acme Holdings"),  # subject is a suffix of object
+            ("Acme Holdings", "Acme"),  # object is contained in subject
+            ("Apple", "Apple Park, Cupertino"),
+        ],
+    )
+    def test_containment_is_not_equality(self, subject: str, obj: str) -> None:
+        """The rule is exact equality after strip (4B section 5, check 3), NOT
+        'one contains the other'. Distinct entities routinely share words:
+        'Acme' acquired 'Acme Holdings' is a valid claim. Widening the rule
+        to containment would silently reject real facts."""
+        raw = "some real text about Acme"
+        _assert_accepted(_validate(subject, "acquired", obj, raw_text=raw))
+
     def test_distinct_subject_and_object_pass(self) -> None:
         raw = _real_text(_MSFT_CLEAN)
         _assert_accepted(
