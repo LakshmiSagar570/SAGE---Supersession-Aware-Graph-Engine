@@ -150,7 +150,21 @@ def validate_and_build_fact(
     caller (see run_experiment.py) as experimental metadata keyed by
     the constructed Fact's fact_id, never inside the Fact.
     """
-    if not candidate.subject.strip() or not candidate.predicate.strip() or not candidate.object.strip():
+    # Phase 4C Step 4b: source_span belongs in the SAME required-field
+    # check as subject/predicate/object (4B section 5, check 1: "subject,
+    # predicate, object, and source_span must all be non-empty strings
+    # after stripping whitespace"). Before this fix, an empty or
+    # whitespace-only source_span passed both this check and the
+    # containment check below ("" is trivially "in" any string), so a
+    # candidate with zero real grounding in the document could still
+    # become a Fact. This closes that gap; it is a correction to the
+    # validation contract as already specified, not a new rule.
+    if (
+        not candidate.subject.strip()
+        or not candidate.predicate.strip()
+        or not candidate.object.strip()
+        or not candidate.source_span.strip()
+    ):
         return CandidateResult(
             candidate=candidate,
             rejection_reason=RejectionReason.EMPTY_REQUIRED_FIELD,
