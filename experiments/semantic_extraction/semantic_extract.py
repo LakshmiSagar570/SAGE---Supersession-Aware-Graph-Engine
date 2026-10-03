@@ -23,6 +23,7 @@ from pydantic import ValidationError
 from experiments.semantic_extraction.candidate import (
     ExtractionCandidate,
     ExtractionOrigin,
+    normalize_semantic_predicate,
 )
 
 # Type of the injected LLM-calling function: takes the raw document
@@ -130,11 +131,16 @@ def _parse_response(raw_response: str) -> SemanticExtractionResult:
             # declare. It is stamped here, AFTER unpacking the model's
             # item, so a response that includes its own "origin" key
             # (e.g. claiming RULE) is overridden rather than trusted.
-            candidates.append(
-                ExtractionCandidate(
-                    **{**item, "origin": ExtractionOrigin.SEMANTIC}
-                )
-            )
+            stamped = {**item, "origin": ExtractionOrigin.SEMANTIC}
+            # Phase 4C Step 7: normalize the predicate at construction
+            # time, SEMANTIC candidates only, before validation. A
+            # non-string or missing predicate is left alone so the
+            # existing ValidationError path rejects it, rather than
+            # crashing here.
+            predicate = stamped.get("predicate")
+            if isinstance(predicate, str):
+                stamped["predicate"] = normalize_semantic_predicate(predicate)
+            candidates.append(ExtractionCandidate(**stamped))
         except ValidationError as exc:
             # Per design section 2.5: a single malformed candidate within
             # an otherwise-valid response is rejected individually --

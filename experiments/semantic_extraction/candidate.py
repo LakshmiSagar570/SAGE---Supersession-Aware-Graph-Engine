@@ -107,6 +107,37 @@ class RejectionReason(str, Enum):
 _BARE_COPULA_PREDICATES = frozenset({"is", "are", "was", "were"})
 
 
+# Phase 4B section 3 / Phase 4C Step 7: SEMANTIC predicate normalization.
+#
+# EXACTLY ONE entry, by design. An entry belongs here only if a person has
+# confirmed the SEMANTIC phrasing asserts the IDENTICAL real-world claim as
+# an existing RULE predicate -- not a related or topically similar one.
+#
+# Two mappings were proposed in an earlier 4B draft and REJECTED as wrong
+# (not merely imprecise). They must NOT be reintroduced:
+#     "is located in"      -> "is headquartered in"   (different claims: a
+#         company can have many locations but one headquarters)
+#     "was incorporated in" -> "was founded on"       (different events:
+#         legal incorporation is not the same as founding)
+# Matching is exact string equality (no case-folding, no stripping):
+# unrecognized predicates pass through UNCHANGED.
+#
+# Applied ONLY at SEMANTIC candidate construction time
+# (semantic_extract._parse_response), never inside validate_and_build_fact,
+# which must stay origin-agnostic (Phase 4A/4B).
+_PREDICATE_NORMALIZATION_MAP: dict[str, str] = {
+    "has been appointed chief financial officer of": (
+        "was appointed Chief Financial Officer of"
+    ),
+}
+
+
+def normalize_semantic_predicate(predicate: str) -> str:
+    """Return the canonical predicate for a SEMANTIC-origin candidate, or
+    `predicate` itself, unchanged, if it is not in the locked table."""
+    return _PREDICATE_NORMALIZATION_MAP.get(predicate, predicate)
+
+
 class CandidateResult(BaseModel):
     """The outcome of validating one ExtractionCandidate: either a real
     Fact was constructed, or it was rejected with a specific reason.
