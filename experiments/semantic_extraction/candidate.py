@@ -272,13 +272,25 @@ def _parse_effective_from(text: str | None, *, fallback: datetime) -> datetime:
     if not text:
         return fallback
 
-    candidate_formats = ["%Y-%m-%d", "%B %d, %Y", "%b %d, %Y"]
+    candidate_formats = ["%Y-%m-%d", "%B %d, %Y", "%b %d, %Y", "%Y"]
     cleaned = text.strip().rstrip(".")
     for fmt in candidate_formats:
         try:
             parsed = datetime.strptime(cleaned, fmt)
-            return parsed.replace(tzinfo=UTC)
         except ValueError:
             continue
+        if fmt == "%Y":
+            # Phase 4B section 4 / Phase 4C Step 8 -- PRECISION-LOSS
+            # CONVENTION, not a precise date. A year-only expression
+            # (e.g. "1975") is represented internally as January 1 of
+            # that year SOLELY because Fact.effective_from is typed as
+            # a datetime and requires a full date. This does NOT assert
+            # the underlying event occurred on January 1st -- it
+            # asserts only that the year is known and the exact day is
+            # not. Any code or person reading effective_from for a fact
+            # derived this way must not treat the month/day portion as
+            # a real, known fact about when the event occurred.
+            pass
+        return parsed.replace(tzinfo=UTC)
 
     return fallback
