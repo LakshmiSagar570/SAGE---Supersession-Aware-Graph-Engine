@@ -67,6 +67,24 @@ For each claim you find, return an object with these exact fields:
 Respond with ONLY a JSON array of these objects, and nothing else -- no explanation, no markdown code fences, no text before or after the array. If the text contains no such claims, respond with exactly: []"""
 
 
+
+# Phase 4C Step 11 -- cache identity for this client's exact
+# (model, prompt) combination. prompt_version="nvidia-semantic-v1"
+# identifies THIS module's _SYSTEM_PROMPT specifically -- the one
+# carrying the Step 6 narrowed clause-level date-association
+# instruction -- not openai_client.py's differently worded prompt.
+# Bump this version if _SYSTEM_PROMPT above is ever edited, so a
+# cache keyed on the old version is never silently reused against a
+# changed prompt.
+from experiments.semantic_extraction.semantic_cache import CacheIdentity
+
+CACHE_IDENTITY = CacheIdentity(
+    model_identifier="meta/llama-3.2-11b-vision-instruct",
+    prompt_version="nvidia-semantic-v1",
+    extraction_schema_version="candidate-v1",
+)
+
+
 def build_nvidia_call_llm(model: str = "meta/llama-3.2-11b-vision-instruct"):
     """Returns a call_llm function (str -> str) backed by a real NVIDIA
     NIM chat completion call. Raises on any API-level failure (network,

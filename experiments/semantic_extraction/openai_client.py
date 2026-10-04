@@ -47,6 +47,24 @@ For each claim you find, return an object with these exact fields:
 Respond with ONLY a JSON array of these objects. If the text contains no such claims, respond with an empty array: []. Do not include any text before or after the JSON array."""
 
 
+
+# Phase 4C Step 11 -- cache identity for this client's exact
+# (model, prompt) combination. prompt_version="openai-semantic-v1" is
+# a DIFFERENT value from nvidia_client.py's "nvidia-semantic-v1" on
+# purpose: this module's _SYSTEM_PROMPT above has different wording
+# for effective_from_text (it lacks the Step 6 narrowed clause-level
+# instruction) -- the two are not the same prompt under two names, and
+# must not share one version identifier. Bump this version if this
+# module's _SYSTEM_PROMPT is ever edited.
+from experiments.semantic_extraction.semantic_cache import CacheIdentity
+
+CACHE_IDENTITY = CacheIdentity(
+    model_identifier="gpt-4o-mini",
+    prompt_version="openai-semantic-v1",
+    extraction_schema_version="candidate-v1",
+)
+
+
 def build_openai_call_llm(model: str = "gpt-4o-mini"):
     """Returns a call_llm function (str -> str) backed by a real OpenAI
     chat completion call. Raises on any API-level failure (network,
