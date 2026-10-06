@@ -1,0 +1,114 @@
+{
+  "fixed_reference": "fixtures/edgar/msft_def14a_thompson_ceo.txt",
+  "fixed_source_id": "fixtures/edgar/msft_def14a_thompson_ceo.txt",
+  "run1": {
+    "run": "RUN 1",
+    "rule_candidate_count": 1,
+    "cache_key": "c44101d00cfdc64a9b0ddd0394b108170ab7a1a3f6165f269d1374cfd1865417",
+    "cache_hit": false,
+    "provider_calls": 1,
+    "semantic_status": "OK",
+    "semantic_candidate_count": 1,
+    "rule_candidate_json": {
+      "subject": "Mr. Thompson",
+      "predicate": "is the chief executive officer of",
+      "object": "Virtual Instruments",
+      "effective_from_text": null,
+      "llm_confidence": null,
+      "source_span": "Mr. Thompson is the chief executive officer of Virtual Instruments.",
+      "origin": "RULE"
+    },
+    "semantic_candidate_json": {
+      "subject": "Mr. Thompson",
+      "predicate": "is the chief executive officer of",
+      "object": "Virtual Instruments",
+      "effective_from_text": null,
+      "llm_confidence": 1.0,
+      "source_span": "Mr. Thompson is the chief executive officer of Virtual Instruments.",
+      "origin": "SEMANTIC"
+    },
+    "rule_fact_id": "41249530-6bd2-47b9-bc85-3ae98783a6d5",
+    "semantic_fact_id": "4972b923-7514-4e24-8b38-3ff3145dcd2b",
+    "accepted_count": 2,
+    "rejected_count": 0,
+    "stage2_fact_count": 2,
+    "stage3_contradiction_count": 0,
+    "stage4_assessment_count": 0,
+    "stage5_resolution_count": 0,
+    "stage6_output": {
+      "facts_written": 2,
+      "sources_written": 1,
+      "contradictions_written": 0,
+      "authority_assessments_written": 0,
+      "resolutions_written": 0,
+      "status": "COMMITTED"
+    }
+  },
+  "run2": {
+    "run": "RUN 2",
+    "rule_candidate_count": 1,
+    "cache_key": "c44101d00cfdc64a9b0ddd0394b108170ab7a1a3f6165f269d1374cfd1865417",
+    "cache_hit": true,
+    "provider_calls": 0,
+    "semantic_status": "OK",
+    "semantic_candidate_count": 1,
+    "rule_candidate_json": {
+      "subject": "Mr. Thompson",
+      "predicate": "is the chief executive officer of",
+      "object": "Virtual Instruments",
+      "effective_from_text": null,
+      "llm_confidence": null,
+      "source_span": "Mr. Thompson is the chief executive officer of Virtual Instruments.",
+      "origin": "RULE"
+    },
+    "semantic_candidate_json": {
+      "subject": "Mr. Thompson",
+      "predicate": "is the chief executive officer of",
+      "object": "Virtual Instruments",
+      "effective_from_text": null,
+      "llm_confidence": 1.0,
+      "source_span": "Mr. Thompson is the chief executive officer of Virtual Instruments.",
+      "origin": "SEMANTIC"
+    },
+    "rule_fact_id": "4cf80006-aa2f-4091-8291-e2d12e70df49",
+    "semantic_fact_id": "fcc88c29-139b-432c-9e8a-a0366ffc3013",
+    "accepted_count": 2,
+    "rejected_count": 0,
+    "stage2_fact_count": 2,
+    "stage3_contradiction_count": 0,
+    "stage4_assessment_count": 0,
+    "stage5_resolution_count": 0,
+    "stage6_output": {
+      "facts_written": 2,
+      "sources_written": 1,
+      "contradictions_written": 0,
+      "authority_assessments_written": 0,
+      "resolutions_written": 0,
+      "status": "COMMITTED"
+    }
+  },
+  "graph_before": {
+    "total_nodes_and_rels": "nodes, rels\n8, 9",
+    "per_label_counts": "sources, facts, contradictions, assessments, resolutions\n2, 2, 1, 2, 1",
+    "per_relationship_counts": "rel_type, count\n\"ASSESSED_BY\", 2\n\"CONFLICTS\", 2\n\"FROM_SOURCE\", 2\n\"RESOLVES\", 1\n\"SUPERSEDES\", 1\n\"WINNER\", 1",
+    "virtual_instruments_facts": "",
+    "virtual_instruments_sources": "",
+    "virtual_instruments_conflicts": ""
+  },
+  "graph_after_run1": {
+    "total_nodes_and_rels": "nodes, rels\n11, 11",
+    "per_label_counts": "sources, facts, contradictions, assessments, resolutions\n3, 4, 1, 2, 1",
+    "per_relationship_counts": "rel_type, count\n\"ASSESSED_BY\", 2\n\"CONFLICTS\", 2\n\"FROM_SOURCE\", 4\n\"RESOLVES\", 1\n\"SUPERSEDES\", 1\n\"WINNER\", 1",
+    "virtual_instruments_facts": "f.fact_id, f.subject, f.predicate, f.object, f.evidence\n\"41249530-6bd2-47b9-bc85-3ae98783a6d5\", \"Mr. Thompson\", \"is the chief executive officer of\", \"Virtual Instruments\", \"Mr. Thompson is the chief executive officer of Virtual Instruments.\"\n\"4972b923-7514-4e24-8b38-3ff3145dcd2b\", \"Mr. Thompson\", \"is the chief executive officer of\", \"Virtual Instruments\", \"Mr. Thompson is the chief executive officer of Virtual Instruments.\"",
+    "virtual_instruments_sources": "s.source_id\n\"fixtures/edgar/msft_def14a_thompson_ceo.txt\"",
+    "virtual_instruments_conflicts": ""
+  },
+  "graph_after_run2": {
+    "total_nodes_and_rels": "nodes, rels\n13, 13",
+    "per_label_counts": "sources, facts, contradictions, assessments, resolutions\n3, 6, 1, 2, 1",
+    "per_relationship_counts": "rel_type, count\n\"ASSESSED_BY\", 2\n\"CONFLICTS\", 2\n\"FROM_SOURCE\", 6\n\"RESOLVES\", 1\n\"SUPERSEDES\", 1\n\"WINNER\", 1",
+    "virtual_instruments_facts": "f.fact_id, f.subject, f.predicate, f.object, f.evidence\n\"41249530-6bd2-47b9-bc85-3ae98783a6d5\", \"Mr. Thompson\", \"is the chief executive officer of\", \"Virtual Instruments\", \"Mr. Thompson is the chief executive officer of Virtual Instruments.\"\n\"4972b923-7514-4e24-8b38-3ff3145dcd2b\", \"Mr. Thompson\", \"is the chief executive officer of\", \"Virtual Instruments\", \"Mr. Thompson is the chief executive officer of Virtual Instruments.\"\n\"4cf80006-aa2f-4091-8291-e2d12e70df49\", \"Mr. Thompson\", \"is the chief executive officer of\", \"Virtual Instruments\", \"Mr. Thompson is the chief executive officer of Virtual Instruments.\"\n\"fcc88c29-139b-432c-9e8a-a0366ffc3013\", \"Mr. Thompson\", \"is the chief executive officer of\", \"Virtual Instruments\", \"Mr. Thompson is the chief executive officer of Virtual Instruments.\"",
+    "virtual_instruments_sources": "s.source_id\n\"fixtures/edgar/msft_def14a_thompson_ceo.txt\"",
+    "virtual_instruments_conflicts": ""
+  }
+}
