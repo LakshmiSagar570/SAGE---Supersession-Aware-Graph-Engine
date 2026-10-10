@@ -1,0 +1,255 @@
+{
+  "per_document": [
+    {
+      "filename": "apple_10k_2024_properties.txt",
+      "rule_candidate_count": 0,
+      "semantic_status": "OK",
+      "semantic_candidate_count": 3,
+      "semantic_error_detail": null,
+      "accepted_count": 3,
+      "rejected_count": 0,
+      "rejections": [],
+      "facts": [
+        {
+          "subject": "The Company",
+          "predicate": "is located in",
+          "object": "Cupertino, California",
+          "fact_id": "2000ca0a-37c7-40f6-875f-215b9098c3bb"
+        },
+        {
+          "subject": "The Company",
+          "predicate": "owned or leased facilities and land for corporate functions, R&D, data centers, retail and other purposes",
+          "object": "locations throughout the U.S. and in various places outside the U.S.",
+          "fact_id": "f98c14cd-8950-40aa-a997-f46598b831e5"
+        },
+        {
+          "subject": "The Company",
+          "predicate": "are in good operating condition and are suitable for the conduct of its business",
+          "object": "its existing facilities and equipment",
+          "fact_id": "d12ac9af-5d59-4ddc-a68e-b5f3aeb2a052"
+        }
+      ]
+    },
+    {
+      "filename": "apple_10k_2024_cybersecurity.txt",
+      "rule_candidate_count": 0,
+      "semantic_status": "OK",
+      "semantic_candidate_count": 5,
+      "semantic_error_detail": null,
+      "accepted_count": 4,
+      "rejected_count": 1,
+      "rejections": [
+        {
+          "origin": "SEMANTIC",
+          "subject": "The Company's Head of Corporate Information Security",
+          "predicate": "has overall responsibility for identifying, assessing and managing any material risks from",
+          "object": "cybersecurity threats",
+          "reason": "RejectionReason.UNVERIFIABLE_SOURCE_SPAN"
+        }
+      ],
+      "facts": [
+        {
+          "subject": "The Company's Head of Corporate Information Security",
+          "predicate": "has",
+          "object": "extensive knowledge and skills",
+          "fact_id": "fc41512a-1405-459d-bf12-55a04a434c0c"
+        },
+        {
+          "subject": "The Company's Head of Corporate Information Security",
+          "predicate": "has gained",
+          "object": "over 25 years of experience in the cybersecurity industry",
+          "fact_id": "66e2a214-6304-4987-9f78-dbfa626d7fb2"
+        },
+        {
+          "subject": "The Company's Head of Corporate Information Security",
+          "predicate": "has served in",
+          "object": "leadership positions at other large technology companies",
+          "fact_id": "f226dddd-92d4-4357-aa92-ee4d5a279bc3"
+        },
+        {
+          "subject": "The Company's Head of Corporate Information Security",
+          "predicate": "has led",
+          "object": "the Company's Information Security team",
+          "fact_id": "df51e994-1252-486f-a275-dbb4b863ee74"
+        }
+      ]
+    },
+    {
+      "filename": "apple_10k_2024_talent_risk.txt",
+      "rule_candidate_count": 0,
+      "semantic_status": "OK",
+      "semantic_candidate_count": 4,
+      "semantic_error_detail": "item 3: 1 validation error for ExtractionCandidate\nobject\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type",
+      "accepted_count": 1,
+      "rejected_count": 3,
+      "rejections": [
+        {
+          "origin": "SEMANTIC",
+          "subject": "Chief Executive Officer",
+          "predicate": "is a key personnel",
+          "object": "Chief Executive Officer",
+          "reason": "RejectionReason.SUBJECT_EQUALS_OBJECT"
+        },
+        {
+          "origin": "SEMANTIC",
+          "subject": "executive team",
+          "predicate": "is a key personnel",
+          "object": "executive team",
+          "reason": "RejectionReason.SUBJECT_EQUALS_OBJECT"
+        },
+        {
+          "origin": "SEMANTIC",
+          "subject": "other highly skilled employees",
+          "predicate": "is a key personnel",
+          "object": "other highly skilled employees",
+          "reason": "RejectionReason.SUBJECT_EQUALS_OBJECT"
+        }
+      ],
+      "facts": [
+        {
+          "subject": "experienced personnel",
+          "predicate": "are located in",
+          "object": "Silicon Valley",
+          "fact_id": "9d048746-41d8-4faf-ac9f-d30fce619328"
+        }
+      ]
+    },
+    {
+      "filename": "tenet_10k_incorporation.txt",
+      "rule_candidate_count": 0,
+      "semantic_status": "OK",
+      "semantic_candidate_count": 2,
+      "semantic_error_detail": null,
+      "accepted_count": 2,
+      "rejected_count": 0,
+      "rejections": [],
+      "facts": [
+        {
+          "subject": "Tenet Healthcare Corporation",
+          "predicate": "was incorporated in",
+          "object": "the State of Nevada",
+          "fact_id": "3328167e-1030-44ab-94cb-1bee3a3e3941"
+        },
+        {
+          "subject": "Tenet Healthcare Corporation",
+          "predicate": "file",
+          "object": "annual, quarterly and current reports, proxy statements and other documents",
+          "fact_id": "711ea709-de52-48ec-9ff9-50a5ee6f5ae7"
+        }
+      ]
+    },
+    {
+      "filename": "ict_8k_cfo_appointment.txt",
+      "rule_candidate_count": 0,
+      "semantic_status": "OK",
+      "semantic_candidate_count": 2,
+      "semantic_error_detail": null,
+      "accepted_count": 2,
+      "rejected_count": 0,
+      "rejections": [],
+      "facts": [
+        {
+          "subject": "Ryan LeBon",
+          "predicate": "was appointed Chief Financial Officer of",
+          "object": "the Company",
+          "fact_id": "ca964c32-d19b-4333-834c-7f123f9aa15e"
+        },
+        {
+          "subject": "Richard Ransom",
+          "predicate": "continues as President of",
+          "object": "the Company",
+          "fact_id": "0f8faa37-8470-4c7b-a479-fe463d91e19c"
+        }
+      ]
+    },
+    {
+      "filename": "8x8_8k_cfo_appointment.txt",
+      "rule_candidate_count": 0,
+      "semantic_status": "OK",
+      "semantic_candidate_count": 2,
+      "semantic_error_detail": null,
+      "accepted_count": 2,
+      "rejected_count": 0,
+      "rejections": [],
+      "facts": [
+        {
+          "subject": "James Sullivan",
+          "predicate": "was appointed Chief Financial Officer of",
+          "object": "8x8, Inc.",
+          "fact_id": "4f9af31b-c8d0-44bd-a184-9bd2fc8f8716"
+        },
+        {
+          "subject": "David Stoll",
+          "predicate": "replacing",
+          "object": "chief financial officer of 8x8, Inc.",
+          "fact_id": "b83f5de0-50d1-4e45-adb5-df10a7507728"
+        }
+      ]
+    },
+    {
+      "filename": "msft_def14a_thompson_ceo.txt",
+      "rule_candidate_count": 1,
+      "semantic_status": "OK",
+      "semantic_candidate_count": 1,
+      "semantic_error_detail": null,
+      "accepted_count": 2,
+      "rejected_count": 0,
+      "rejections": [],
+      "facts": [
+        {
+          "subject": "Mr. Thompson",
+          "predicate": "is the chief executive officer of",
+          "object": "Virtual Instruments",
+          "fact_id": "50fc57d0-0c1a-4e1b-97d5-68bd210a8c3a"
+        },
+        {
+          "subject": "Mr. Thompson",
+          "predicate": "is the chief executive officer of",
+          "object": "Virtual Instruments",
+          "fact_id": "8296408d-35fe-4ebf-aa1c-1e363909d194"
+        }
+      ]
+    },
+    {
+      "filename": "msft_def14a_thompson_ceo_verbatim_compound.txt",
+      "rule_candidate_count": 1,
+      "semantic_status": "OK",
+      "semantic_candidate_count": 2,
+      "semantic_error_detail": null,
+      "accepted_count": 3,
+      "rejected_count": 0,
+      "rejections": [],
+      "facts": [
+        {
+          "subject": "Mr. Thompson",
+          "predicate": "is the chief executive officer of",
+          "object": "and has a less-than-10% beneficial interest in Virtual Instruments",
+          "fact_id": "9930312d-1e46-4fa4-bc13-cc8fc0757d91"
+        },
+        {
+          "subject": "Mr. Thompson",
+          "predicate": "is the chief executive officer of",
+          "object": "Virtual Instruments",
+          "fact_id": "df3e83b9-cbca-4b7b-ba1e-afad91dbfb5d"
+        },
+        {
+          "subject": "Mr. Thompson",
+          "predicate": "has a less-than-10% beneficial interest in",
+          "object": "Virtual Instruments",
+          "fact_id": "52e69693-ac6e-4c12-b80b-5140db6b7602"
+        }
+      ]
+    }
+  ],
+  "total_facts_accepted": 19,
+  "stage3_contradiction_count": 0,
+  "stage5_resolution_count": 0,
+  "stage6_output": {
+    "facts_written": 19,
+    "sources_written": 8,
+    "contradictions_written": 0,
+    "authority_assessments_written": 0,
+    "resolutions_written": 0,
+    "status": "COMMITTED"
+  }
+}

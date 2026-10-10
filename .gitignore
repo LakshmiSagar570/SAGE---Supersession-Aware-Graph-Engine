@@ -35,3 +35,6 @@ Thumbs.db
 # Local databases / generated data
 neo4j_data/
 redis_data/
+
+# WSL download artifacts
+*:Zone.Identifier

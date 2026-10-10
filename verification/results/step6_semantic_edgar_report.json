@@ -1,0 +1,303 @@
+{
+  "run_at_utc": "2026-09-26T16:42:46.589779+00:00",
+  "documents": [
+    {
+      "file": "apple_10k_2024_properties.txt",
+      "status": "OK",
+      "error_detail": null,
+      "accepted": [
+        {
+          "subject": "The Company",
+          "predicate": "is located in",
+          "object": "Cupertino, California",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "The Company's headquarters is located in Cupertino, California.",
+          "source_span_is_real_substring": true,
+          "fact_id": "d871f28c-ab13-4bc0-a745-278a719a1026",
+          "effective_from": "2026-09-26T16:41:46.324018+00:00",
+          "effective_from_is_extracted_at_fallback": true
+        },
+        {
+          "subject": "The Company",
+          "predicate": "owned or leased facilities and land",
+          "object": "locations throughout the U.S. and in various places outside the U.S.",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "As of September 28, 2024, the Company owned or leased facilities and land for corporate functions, R&D, data centers, retail and other purposes at locations throughout the U.S. and in various places outside the U.S.",
+          "source_span_is_real_substring": true,
+          "fact_id": "f2d68d81-4c8f-4d19-8134-395d01a8a5c8",
+          "effective_from": "2026-09-26T16:41:46.324186+00:00",
+          "effective_from_is_extracted_at_fallback": true
+        },
+        {
+          "subject": "The Company",
+          "predicate": "are in good operating condition",
+          "object": "its existing facilities and equipment",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "The Company believes its existing facilities and equipment, which are used by all reportable segments, are in good operating condition and are suitable for the conduct of its business.",
+          "source_span_is_real_substring": true,
+          "fact_id": "6125d0a2-b3bb-4c91-9fea-de171e18c60b",
+          "effective_from": "2026-09-26T16:41:46.324225+00:00",
+          "effective_from_is_extracted_at_fallback": true
+        }
+      ],
+      "rejected": []
+    },
+    {
+      "file": "apple_10k_2024_cybersecurity.txt",
+      "status": "OK",
+      "error_detail": null,
+      "accepted": [
+        {
+          "subject": "The Company's Head of Corporate Information Security",
+          "predicate": "has extensive knowledge and skills gained from",
+          "object": "over 25 years of experience in the cybersecurity industry",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "The Company's Head of Corporate Information Security has extensive knowledge and skills gained from over 25 years of experience in the cybersecurity industry,",
+          "source_span_is_real_substring": true,
+          "fact_id": "6fce3c5e-556b-4726-98e7-5eb385c96160",
+          "effective_from": "2026-09-26T16:41:52.870074+00:00",
+          "effective_from_is_extracted_at_fallback": true
+        },
+        {
+          "subject": "The Company's Head of Corporate Information Security",
+          "predicate": "has served in leadership positions at",
+          "object": "other large technology companies",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "including serving in leadership positions at other large technology companies",
+          "source_span_is_real_substring": true,
+          "fact_id": "42526a26-4417-49fe-a99c-224619dea96a",
+          "effective_from": "2026-09-26T16:41:52.870210+00:00",
+          "effective_from_is_extracted_at_fallback": true
+        },
+        {
+          "subject": "The Company's Head of Corporate Information Security",
+          "predicate": "has led the Company's Information Security team",
+          "object": "since 2016",
+          "effective_from_text": "2016",
+          "llm_confidence": 1.0,
+          "source_span": "leading the Company's Information Security team since 2016",
+          "source_span_is_real_substring": true,
+          "fact_id": "46fabdde-bb49-4297-9374-8e932e0a032a",
+          "effective_from": "2026-09-26T16:41:52.870242+00:00",
+          "effective_from_is_extracted_at_fallback": true
+        }
+      ],
+      "rejected": [
+        {
+          "subject": "The Company's Head of Corporate Information Security",
+          "predicate": "has overall responsibility for identifying, assessing and managing any material risks from",
+          "object": "cybersecurity threats",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "The Company's Head of Corporate Information Security has overall responsibility for identifying, assessing and managing any material risks from cybersecurity threats.",
+          "source_span_is_real_substring": false,
+          "rejection_reason": "UNVERIFIABLE_SOURCE_SPAN"
+        }
+      ]
+    },
+    {
+      "file": "apple_10k_2024_talent_risk.txt",
+      "status": "OK",
+      "error_detail": "item 3: 1 validation error for ExtractionCandidate\nobject\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type",
+      "accepted": [
+        {
+          "subject": "experienced personnel",
+          "predicate": "are located in",
+          "object": "Silicon Valley",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "especially in Silicon Valley, where most of the Company's key personnel are located",
+          "source_span_is_real_substring": true,
+          "fact_id": "20c70abf-5fc7-434f-9750-1a14e76f96e8",
+          "effective_from": "2026-09-26T16:42:20.672284+00:00",
+          "effective_from_is_extracted_at_fallback": true
+        }
+      ],
+      "rejected": [
+        {
+          "subject": "Chief Executive Officer",
+          "predicate": "is a key personnel",
+          "object": "Chief Executive Officer",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "its Chief Executive Officer, executive team and other highly skilled employees",
+          "source_span_is_real_substring": true,
+          "rejection_reason": "SUBJECT_EQUALS_OBJECT"
+        },
+        {
+          "subject": "executive team",
+          "predicate": "is a key personnel",
+          "object": "executive team",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "its Chief Executive Officer, executive team and other highly skilled employees",
+          "source_span_is_real_substring": true,
+          "rejection_reason": "SUBJECT_EQUALS_OBJECT"
+        },
+        {
+          "subject": "other highly skilled employees",
+          "predicate": "is a key personnel",
+          "object": "other highly skilled employees",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "its Chief Executive Officer, executive team and other highly skilled employees",
+          "source_span_is_real_substring": true,
+          "rejection_reason": "SUBJECT_EQUALS_OBJECT"
+        }
+      ]
+    },
+    {
+      "file": "tenet_10k_incorporation.txt",
+      "status": "OK",
+      "error_detail": null,
+      "accepted": [
+        {
+          "subject": "Tenet Healthcare Corporation",
+          "predicate": "was incorporated in",
+          "object": "the State of Nevada",
+          "effective_from_text": "1975",
+          "llm_confidence": 1.0,
+          "source_span": "Tenet Healthcare Corporation was incorporated in the State of Nevada in 1975.",
+          "source_span_is_real_substring": true,
+          "fact_id": "8f0dea6e-d8b7-4a5c-b625-630e3bb18385",
+          "effective_from": "2026-09-26T16:42:24.015523+00:00",
+          "effective_from_is_extracted_at_fallback": true
+        },
+        {
+          "subject": "Tenet Healthcare Corporation",
+          "predicate": "file",
+          "object": "annual, quarterly and current reports, proxy statements and other documents",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "We file annual, quarterly and current reports, proxy statements and other documents with the SEC under the Securities Exchange Act of 1934, as amended.",
+          "source_span_is_real_substring": true,
+          "fact_id": "8e4e83fb-f54a-4c41-9218-ebe8f0adee43",
+          "effective_from": "2026-09-26T16:42:24.015835+00:00",
+          "effective_from_is_extracted_at_fallback": true
+        }
+      ],
+      "rejected": []
+    },
+    {
+      "file": "ict_8k_cfo_appointment.txt",
+      "status": "OK",
+      "error_detail": null,
+      "accepted": [
+        {
+          "subject": "Ryan LeBon",
+          "predicate": "was appointed Chief Financial Officer of",
+          "object": "the Company",
+          "effective_from_text": "January 1, 2014",
+          "llm_confidence": 1.0,
+          "source_span": "Our Board of Directors has appointed Ryan LeBon as Chief Financial Officer of the Company, effective January 1, 2014, to serve in that capacity at the will of our Board of Directors.",
+          "source_span_is_real_substring": true,
+          "fact_id": "63f6311d-d318-4f54-b588-7dca5779a43a",
+          "effective_from": "2014-01-01T00:00:00+00:00",
+          "effective_from_is_extracted_at_fallback": false
+        },
+        {
+          "subject": "Richard Ransom",
+          "predicate": "continues as President of",
+          "object": "the Company",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "Richard Ransom, our previous Chief Financial Officer, continues as President of the Company.",
+          "source_span_is_real_substring": true,
+          "fact_id": "e322dab0-28e0-4a9b-a63b-70ae8aaa0aa3",
+          "effective_from": "2026-09-26T16:42:29.211168+00:00",
+          "effective_from_is_extracted_at_fallback": true
+        }
+      ],
+      "rejected": []
+    },
+    {
+      "file": "8x8_8k_cfo_appointment.txt",
+      "status": "OK",
+      "error_detail": null,
+      "accepted": [
+        {
+          "subject": "James Sullivan",
+          "predicate": "has been appointed chief financial officer of",
+          "object": "8x8, Inc.",
+          "effective_from_text": "July 24, 2002",
+          "llm_confidence": 1.0,
+          "source_span": "On July 24, 2002, 8x8, Inc. issued a press release announcing that James Sullivan has been appointed chief financial officer of 8x8, Inc., replacing David Stoll.",
+          "source_span_is_real_substring": true,
+          "fact_id": "bf930679-0e52-42ec-986d-62759185b869",
+          "effective_from": "2002-07-24T00:00:00+00:00",
+          "effective_from_is_extracted_at_fallback": false
+        },
+        {
+          "subject": "David Stoll",
+          "predicate": "replacing",
+          "object": "chief financial officer of 8x8, Inc.",
+          "effective_from_text": "July 24, 2002",
+          "llm_confidence": 1.0,
+          "source_span": "On July 24, 2002, 8x8, Inc. issued a press release announcing that James Sullivan has been appointed chief financial officer of 8x8, Inc., replacing David Stoll.",
+          "source_span_is_real_substring": true,
+          "fact_id": "d3d55051-a74c-4e17-8eaf-f90850fffb50",
+          "effective_from": "2002-07-24T00:00:00+00:00",
+          "effective_from_is_extracted_at_fallback": false
+        }
+      ],
+      "rejected": []
+    },
+    {
+      "file": "msft_def14a_thompson_ceo.txt",
+      "status": "OK",
+      "error_detail": null,
+      "accepted": [
+        {
+          "subject": "Mr. Thompson",
+          "predicate": "is the chief executive officer of",
+          "object": "Virtual Instruments",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "Mr. Thompson is the chief executive officer of Virtual Instruments.",
+          "source_span_is_real_substring": true,
+          "fact_id": "00afedbe-1f45-4d51-9deb-698f3204a01f",
+          "effective_from": "2026-09-26T16:42:36.041428+00:00",
+          "effective_from_is_extracted_at_fallback": true
+        }
+      ],
+      "rejected": []
+    },
+    {
+      "file": "msft_def14a_thompson_ceo_verbatim_compound.txt",
+      "status": "OK",
+      "error_detail": null,
+      "accepted": [
+        {
+          "subject": "Mr. Thompson",
+          "predicate": "is the chief executive officer of",
+          "object": "Virtual Instruments",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "Mr. Thompson is the chief executive officer of and has a less-than-10% beneficial interest in Virtual Instruments.",
+          "source_span_is_real_substring": true,
+          "fact_id": "5e5c5277-0a05-4705-a33b-d180ea6dbc89",
+          "effective_from": "2026-09-26T16:42:46.587455+00:00",
+          "effective_from_is_extracted_at_fallback": true
+        },
+        {
+          "subject": "Mr. Thompson",
+          "predicate": "has a less-than-10% beneficial interest in",
+          "object": "Virtual Instruments",
+          "effective_from_text": null,
+          "llm_confidence": 1.0,
+          "source_span": "Mr. Thompson is the chief executive officer of and has a less-than-10% beneficial interest in Virtual Instruments.",
+          "source_span_is_real_substring": true,
+          "fact_id": "f9a77b8d-9ab8-4074-ae7e-40009f13ac48",
+          "effective_from": "2026-09-26T16:42:46.587559+00:00",
+          "effective_from_is_extracted_at_fallback": true
+        }
+      ],
+      "rejected": []
+    }
+  ]
+}
